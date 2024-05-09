@@ -1,13 +1,19 @@
 const express = require("express");
 const connectDB = require("./config/db");
 const dotenv = require("dotenv");
-const userRoutes = require("./routes/userRoutes");
-const chatRoutes = require("./routes/chatRoutes");
-const messageRoutes = require("./routes/messageRoutes");
-const { notFound, errorHandler } = require("./utils/errorMiddleware");
-const path = require("path");
+// const userRoutes = require("./routes/userRoutes");
+// const chatRoutes = require("./routes/chatRoutes");
+// const messageRoutes = require("./routes/messageRoutes");
+const { ApolloServer } = require('@apollo/server');
+const { expressMiddleware } = require('@apollo/server/express4');
+const path = require('path');
+const { authMiddleware } = require('./utils/authMiddleware');
+
+const { typeDefs, resolvers } = require('./schema');
+const db = require('./config/db');
+// const { notFound, errorHandler } = require("./utils/errorMiddleware");
 dotenv.config();
-connectDB();
+// connectDB();
 const app = express();
 
 app.use(express.json()); // to accept json data
@@ -16,39 +22,73 @@ app.use(express.json()); // to accept json data
 //   res.send("API Running!");
 // });
 
-app.use("/api/user", userRoutes);
-app.use("/api/chat", chatRoutes);
-app.use("/api/message", messageRoutes);
+// app.use("/api/user", userRoutes);
+// app.use("/api/chat", chatRoutes);
+// app.use("/api/message", messageRoutes);
+
+
+
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+});
 
 // --------------------------deployment------------------------------
 
 const __dirname1 = path.resolve();
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname1, "/client/dist")));
-  console.log(`We're in production mode baby`)
+// if (process.env.NODE_ENV === "production") {
+//   app.use(express.static(path.join(__dirname1, "/client/dist")));
+//   console.log(`We're in production mode baby`)
 
-  app.get("*", (req, res) =>
-    res.sendFile(path.resolve(__dirname1, "client", "dist", "index.html"))
-  );
-} else {
-  app.get("/", (req, res) => {
-    res.send("API is running..");
-  });
-}
+//   app.get("*", (req, res) =>
+//     res.sendFile(path.resolve(__dirname1, "client", "dist", "index.html"))
+//   );
+// } else {
+//   app.get("/", (req, res) => {
+//     res.send("API is running..");
+//   });
+// }
 
 // --------------------------deployment------------------------------
 
 // Error Handling middlewares
-app.use(notFound);
-app.use(errorHandler);
+// app.use(notFound);
+// app.use(errorHandler);
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000
+const startApolloServer = async () => {
+  await server.start();
 
-const server = app.listen(
-  PORT,
-  console.log(`Server running on PORT ${PORT}...`)
-);
+  app.use(express.urlencoded({ extended: false }));
+  app.use(express.json());
+
+  app.use('/graphql', expressMiddleware(server, {
+    context: authMiddleware
+  }));
+
+  if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../client/dist')));
+
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+    });
+  }
+
+  db.once('open', () => {
+    app.listen(PORT, () => {
+      console.log(`API server running on port ${PORT}!`);
+      console.log(`Use GraphQL at http://localhost:${PORT}/graphql`);
+    });
+  });
+};
+
+// Call the async function to start the server
+  startApolloServer();
+// const server = app.listen(
+//   PORT,
+//   console.log(`Server running on PORT ${PORT}...`)
+// );
 
 const io = require("socket.io")(server, {
   pingTimeout: 60000,

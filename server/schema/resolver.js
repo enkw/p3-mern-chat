@@ -1,6 +1,6 @@
 
 const { User, Chat, Message } = require('../models');
-const { signToken, AuthenticationError } = require('../utils/auth');
+const { signToken, AuthenticationError } = require('../utils/authMiddleware');
 
 const resolvers = {
   Query: {
