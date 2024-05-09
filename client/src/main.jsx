@@ -5,15 +5,33 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { ChakraProvider } from "@chakra-ui/react";
 import ChatProvider from "./Context/ChatProvider";
-import { BrowserRouter } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Homepage from "./Pages/Homepage";
+import Chatpage from "./Pages/Chatpage";
 
-ReactDOM.render(
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <App />,
+    children: [
+      {
+        index: true,
+        element: <Homepage />
+      }, {
+        path: '/chat',
+        element: <Chatpage />
+      }
+    ]
+  }
+])
+
+ReactDOM.createRoot(document.getElementById('root')).render(
   <ChakraProvider>
-    <BrowserRouter>
+    <RouterProvider router={router}>
       <ChatProvider>
         <App />
       </ChatProvider>
-    </BrowserRouter>
+    </RouterProvider>
   </ChakraProvider>,
   document.getElementById("root")
 );
