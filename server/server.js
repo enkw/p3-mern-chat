@@ -6,8 +6,9 @@ const chatRoutes = require("./routes/chatRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 const { notFound, errorHandler } = require("./utils/errorMiddleware");
 const path = require("path");
-
+console.log(process.env)
 dotenv.config();
+console.log(process.env)
 connectDB();
 const app = express();
 
