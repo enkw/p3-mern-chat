@@ -1,48 +1,33 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
+const User = require("../models/userModel.js");
+const asyncHandler = require("express-async-handler");
 
-// set token secret and expiration date
-const secret = 'mysecretsshhhhh';
-const expiration = '2h';
+const protect = asyncHandler(async (req, res, next) => {
+  let token;
 
-module.exports = {
-  // function for our authenticated routes
-  authMiddleware: function ({req}) {
-    // allows token to be sent via  req.query or headers
-    let token = req.query.token || req.headers.authorization || req.body.token;
-
-    // ["Bearer", "<tokenvalue>"]
-    if (req.headers.authorization) {
-      token = token.split(' ').pop().trim();
-    }
-
-    if (!token) {
-    return req
-    }
-
-    // verify token and get user data out of it
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
     try {
-      const { data } = jwt.verify(token, secret, { maxAge: expiration });
-      req.user = data;
-    } catch {
-      console.log('Invalid token');
-      // return res.status(400).json({ message: 'invalid token!' });
+      token = req.headers.authorization.split(" ")[1];
+
+      //decodes token id
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+      req.user = await User.findById(decoded.id).select("-password");
+
+      next();
+    } catch (error) {
+      res.status(401);
+      throw new Error("Not authorized, token failed");
     }
+  }
 
-    // send to next endpoint
-  return req
-  },
-  signToken: function ({ username, email, _id }) {
-    const payload = { username, email, _id };
+  if (!token) {
+    res.status(401);
+    throw new Error("Not authorized, no token");
+  }
+});
 
-    return jwt.sign({ data: payload }, secret, { expiresIn: expiration });
-  },
-};
-
-
-
-
-
-
-
-
-
+module.exports = { protect };
