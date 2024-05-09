@@ -50,6 +50,12 @@ const Signup = () => {
                     "Content-type": "application/json",
                 },
             };
+            
+            // Wait for the pic state to be updated
+            await new Promise((resolve) => {
+                setTimeout(resolve, 1000); // Adjust the timeout as needed
+            });
+
             const { data } = await axios.post(
                 "/api/user",
                 {
