@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const messageRoutes = require("./routes/messageRoutes");
-const { notFound, errorHandler } = require("./middleware/errorMiddleware");
+const { notFound, errorHandler } = require("./utils/errorMiddleware");
 const path = require("path");
 
 dotenv.config();
@@ -47,7 +47,7 @@ const PORT = process.env.PORT;
 
 const server = app.listen(
   PORT,
-  console.log(`Server running on PORT ${PORT}...`.yellow.bold)
+  console.log(`Server running on PORT ${PORT}...`)
 );
 
 const io = require("socket.io")(server, {
