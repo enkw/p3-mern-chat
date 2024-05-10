@@ -14,7 +14,7 @@ const ChatProvider = ({ children }) => {
     useEffect(() => {
         const userInfo = JSON.parse(localStorage.getItem("userInfo"));
         setUser(userInfo);
-
+        console.log("runtime!")
         if (!userInfo) history("/");
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [history]);

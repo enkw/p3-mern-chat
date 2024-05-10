@@ -15,7 +15,7 @@ export default defineConfig({
       },
       // Look more into this, could be /api/*
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'http://localhost:4500',
         secure: false,
         changeOrigin: true
       }
