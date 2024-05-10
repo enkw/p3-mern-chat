@@ -3,10 +3,13 @@ import { FormControl, FormLabel } from "@chakra-ui/form-control";
 import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
 import { VStack } from "@chakra-ui/layout";
 import { useState } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { useToast } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { ChatState } from "../../Context/ChatProvider";
+import { useMutation } from "@apollo/client"
+import { LOGIN_USER } from "../../mutations"
+import Auth from "../../auth"
 
 const Login = () => {
     const [show, setShow] = useState(false);
@@ -15,59 +18,80 @@ const Login = () => {
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const [loading, setLoading] = useState(false);
+    const [login] = useMutation(LOGIN_USER)
 
     const history = useNavigate();
     const { setUser } = ChatState();
 
     const submitHandler = async () => {
-        setLoading(true);
-        if (!email || !password) {
-            toast({
-                title: "Please Fill all the Feilds",
-                status: "warning",
-                duration: 5000,
-                isClosable: true,
-                position: "bottom",
-            });
-            setLoading(false);
-            return;
-        }
+        const { data } = await login({
+            variables: { email: email, password: password }
+        })
+        console.log(data)
+        Auth.login(data.login.token)
+console.log("We made it!!!!")
+        toast({
+            title: "Login Successful",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+            position: "bottom",
+        });
 
-        try {
-            const config = {
-                headers: {
-                    "Content-type": "application/json",
-                },
-            };
+        setUser(data.login.user);
+        localStorage.setItem("userInfo", JSON.stringify(data.login.user));
+        setLoading(false);
+        history("/chats");
 
-            const { data } = await axios.post(
-                "/api/user/login",
-                { email, password },
-                config
-            );
+        // setLoading(true);
 
-            toast({
-                title: "Login Successful",
-                status: "success",
-                duration: 5000,
-                isClosable: true,
-                position: "bottom",
-            });
-            setUser(data);
-            localStorage.setItem("userInfo", JSON.stringify(data));
-            setLoading(false);
-            history.push("/chats");
-        } catch (error) {
-            toast({
-                title: "Error Occured!",
-                description: error.response.data.message,
-                status: "error",
-                duration: 5000,
-                isClosable: true,
-                position: "bottom",
-            });
-            setLoading(false);
-        }
+        // if (!email || !password) {
+        //     toast({
+        //         title: "Please Fill all the Feilds",
+        //         status: "warning",
+        //         duration: 5000,
+        //         isClosable: true,
+        //         position: "bottom",
+        //     });
+        //     setLoading(false);
+        //     return;
+        // }
+
+        // try {
+        //     const config = {
+        //         headers: {
+        //             "Content-type": "application/json",
+        //         },
+        //     };
+
+        //     const { data } = await axios.post(
+        //         "/api/user/login",
+        //         { email, password },
+        //         config
+        //     );
+
+        //     toast({
+        //         title: "Login Successful",
+        //         status: "success",
+        //         duration: 5000,
+        //         isClosable: true,
+        //         position: "bottom",
+        //     });
+        //     setUser(data);
+        //     localStorage.setItem("userInfo", JSON.stringify(data));
+        //     setLoading(false);
+        //     history("/chats");
+        // } catch (error) {
+        //     toast({
+        //         title: "Error Occured!",
+        //         description: error.response.data.message,
+        //         status: "error",
+        //         duration: 5000,
+        //         isClosable: true,
+        //         position: "bottom",
+        //     });
+        //     setLoading(false);
+        // }
     };
 
     return (

@@ -147,10 +147,10 @@ function SideDrawer() {
                 <div>
                     <Menu>
                         <MenuButton p={1}>
-                            <NotificationBadge
+                            {/* <NotificationBadge
                                 count={notification.length}
                                 effect={Effect.SCALE}
-                            />
+                            /> */}
                             <BellIcon fontSize="2xl" m={1} />
                         </MenuButton>
                         <MenuList pl={2}>
