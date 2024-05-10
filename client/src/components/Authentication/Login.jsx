@@ -37,7 +37,7 @@ console.log("We made it!!!!")
             isClosable: true,
             position: "bottom",
         });
-
+        data.login.user.token =  data.login.token
         setUser(data.login.user);
         localStorage.setItem("userInfo", JSON.stringify(data.login.user));
         setLoading(false);
