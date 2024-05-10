@@ -14,8 +14,8 @@ export default defineConfig({
         changeOrigin: true
       },
       // Look more into this, could be /api/*
-      '/api': {
-        target: 'http://localhost:4500',
+      '/api/chat': {
+        target: 'http://localhost:5000',
         secure: false,
         changeOrigin: true
       }

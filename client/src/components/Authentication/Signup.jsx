@@ -37,7 +37,9 @@ const Signup = () => {
             isClosable: true,
             position: "bottom",
         });
-        // setUser(data.login.user);
+
+        // setUser(data.addUser.user);
+        data.addUser.user.token = data.addUser.token
         localStorage.setItem("userInfo", JSON.stringify(data.login.user));
         setPicLoading(false);
         history("/chats"); 
