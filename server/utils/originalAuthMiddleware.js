@@ -14,8 +14,8 @@ console.log("middleware!")
 console.log(process.env.JWT_SECRET)
       //decodes token id
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-      req.user = await User.findById(decoded.id).select("-password");
+console.log(decoded, "decoded")
+      req.user = await User.findById(decoded.data._id).select("-password");
 
       next();
     } catch (error) {
