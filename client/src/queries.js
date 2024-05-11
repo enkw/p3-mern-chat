@@ -25,3 +25,41 @@ query {
     }
 }
 `;
+
+// Query to search users by a keyword
+// export const SEARCH_USERS = gql`
+// query SearchUsers($keyword: String!) {
+//     searchUsers(keyword: $keyword) {
+//         _id
+//         name
+//         email
+//         pic
+//     }
+// }
+// `;
+
+// Mutation to initiate a chat between the current user and another user
+// export const INITIATE_CHAT = gql`
+// mutation InitiateChat($userId: ID!) {
+//     initiateChat(userId: $userId) {
+//         _id
+//         participants {
+//             _id
+//             name
+//             email
+//             pic
+//         }
+//         messages {
+//             _id
+//             sender {
+//                 _id
+//                 name
+//                 pic
+//             }
+//             content
+//             createdAt
+//         }
+//     }
+// }
+// `;
+
