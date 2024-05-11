@@ -16,6 +16,12 @@ import {
 
 const ProfileModal = ({ user, children }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const defaultImage = 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'; // Provide a valid default image path
+    //this is also linked in the userModel.js, for the time being this will hold the default.
+
+    const handleImageError = (e) => {
+        e.target.src = defaultImage;
+    };
 
     return (
         <>
@@ -26,14 +32,14 @@ const ProfileModal = ({ user, children }) => {
             )}
             <Modal size="lg" onClose={onClose} isOpen={isOpen} isCentered>
                 <ModalOverlay />
-                <ModalContent h="410px">
+                <ModalContent h="auto">
                     <ModalHeader
                         fontSize="40px"
                         fontFamily="Work sans"
                         d="flex"
                         justifyContent="center"
                     >
-                        {user.name}
+                        {user.name || 'No Name Available'}
                     </ModalHeader>
                     <ModalCloseButton />
                     <ModalBody
@@ -45,14 +51,30 @@ const ProfileModal = ({ user, children }) => {
                         <Image
                             borderRadius="full"
                             boxSize="150px"
-                            src={user.pic}
-                            alt={user.name}
+                            src={user.pic || defaultImage}
+                            alt={user.name || 'Profile Picture'}
+                            onError={handleImageError}
                         />
                         <Text
                             fontSize={{ base: "28px", md: "30px" }}
                             fontFamily="Work sans"
+                            mt="20px"
                         >
-                            Email: {user.email}
+                            Email: {user.email || 'No Email Available'}
+                        </Text>
+                        <Text
+                            fontSize={{ base: "24px", md: "26px" }}
+                            fontFamily="Work sans"
+                            mt="10px"
+                        >
+                            Username: {user.username || 'No Username'}
+                        </Text>
+                        <Text
+                            fontSize={{ base: "20px", md: "22px" }}
+                            fontFamily="Work sans"
+                            mt="5px"
+                        >
+                            Role: {user.role || 'No Role Defined'}
                         </Text>
                     </ModalBody>
                     <ModalFooter>
