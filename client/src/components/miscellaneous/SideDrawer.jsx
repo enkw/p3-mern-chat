@@ -79,6 +79,7 @@ function SideDrawer() {
 
             const { data } = await axios.get(`/api/user?search=${search}`, config);
 
+            console.log(data)
             setLoading(false);
             setSearchResult(data);
         } catch (error) {
@@ -142,7 +143,7 @@ function SideDrawer() {
                     </Button>
                 </Tooltip>
                 <Text fontSize="2xl" fontFamily="Work sans">
-                    Talk-A-Tive
+                    Discourse
                 </Text>
                 <div>
                     <Menu>
