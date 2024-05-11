@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server/server.js",
+    "start:dev": "concurrently \"cd client && npm run dev\" \"cd server && npm start\"",
     "develop": "concurrently \"cd client && npm run dev\" \"cd server && npm run watch\"",
     "install": "cd server && npm i && cd ../client && npm i",
     "seed": "cd server && npm run seed",
@@ -16,6 +17,7 @@
     "concurrently": "^8.2.0"
   },
   "dependencies": {
-    "client": "^0.0.1"
+    "client": "^0.0.1",
+    "concurrently": "^8.2.0"
   }
 }
