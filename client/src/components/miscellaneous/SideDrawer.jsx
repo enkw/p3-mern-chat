@@ -63,6 +63,7 @@ function SideDrawer() {
         },
       };
       const { data } = await axios.get(`/api/user?search=${search}`, config);
+      console.log(data);
       setSearchResult(data);
     } catch (error) {
       toast({
@@ -105,6 +106,8 @@ function SideDrawer() {
       });
     }
   };
+
+  console.log(searchResult);
 
   return (
     <>
@@ -153,8 +156,8 @@ function SideDrawer() {
             {loading ? (
               <ChatLoading />
             ) : (
-              searchResult.map((user) => (
-                <UserListItem key={user._id} user={user} handleFunction={() => accessChat(user._id)} />
+              searchResult.map((userData) => (
+                <UserListItem key={userData._id} user={userData} handleFunction={() => accessChat(userData._id)} />
               ))
             )}
             {loadingChat && <Spinner ml="auto" d="flex" />}
