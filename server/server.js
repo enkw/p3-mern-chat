@@ -1,5 +1,4 @@
 const express = require("express");
-const connectDB = require("./config/db");
 const dotenv = require("dotenv");
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
@@ -8,25 +7,17 @@ const { ApolloServer } = require('@apollo/server');
 const { expressMiddleware } = require('@apollo/server/express4');
 const path = require('path');
 const { authMiddleware } = require('./utils/authMiddleware');
-
 const { typeDefs, resolvers } = require('./schema');
+const { connectDB, mongooseConnection } = require('./config/db');
 const db = require('./config/db');
-// const { notFound, errorHandler } = require("./utils/errorMiddleware");
+
 dotenv.config();
-// connectDB();
 const app = express();
 
 app.use(express.json()); // to accept json data
-
-// app.get("/", (req, res) => {
-//   res.send("API Running!");
-// });
-
 app.use("/api/user", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoutes);
-
-
 
 const server = new ApolloServer({
   typeDefs,
@@ -35,7 +26,7 @@ const server = new ApolloServer({
 
 // --------------------------deployment------------------------------
 
-const __dirname1 = path.resolve();
+// const __dirname1 = path.resolve();
 
 // if (process.env.NODE_ENV === "production") {
 //   app.use(express.static(path.join(__dirname1, "/client/dist")));
@@ -57,7 +48,10 @@ const __dirname1 = path.resolve();
 // app.use(errorHandler);
 
 const PORT = process.env.PORT; 
-const startApolloServer = async () => {
+
+const startServer = async () => {
+  await connectDB(); // Connect to MongoDB
+
   await server.start();
 
   app.use(express.urlencoded({ extended: false }));
@@ -75,55 +69,50 @@ const startApolloServer = async () => {
     });
   }
 
-  db.once('open', () => {
-    console.log(process.env.JWT_SECRET, "in server")
-    const expressServer = app.listen(PORT, () => {
-      console.log(`API server running on port ${PORT}!`);
-      console.log(`Use GraphQL at http://localhost:${PORT}/graphql`);
+  const expressServer = app.listen(PORT, () => {
+    console.log(`API server running on port ${PORT}!`);
+    console.log(`Use GraphQL at http://localhost:${PORT}/graphql`);
+  });
+
+  const io = require("socket.io")(expressServer, {
+    pingTimeout: 60000,
+    cors: {
+      origin: "http://localhost:3000",
+      // credentials: true,
+    },
+  });
+
+  io.on("connection", (socket) => {
+    console.log("Connected to socket.io");
+    socket.on("setup", (userData) => {
+      socket.join(userData._id);
+      socket.emit("connected");
     });
 
-    const io = require("socket.io")(expressServer, {
-      pingTimeout: 60000,
-      cors: {
-        origin: "http://localhost:3000",
-        // credentials: true,
-      },
+    socket.on("join chat", (room) => {
+      socket.join(room);
+      console.log("User Joined Room: " + room);
+    });
+    socket.on("typing", (room) => socket.in(room).emit("typing"));
+    socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
+
+    socket.on("new message", (newMessageRecieved) => {
+      var chat = newMessageRecieved.chat;
+
+      if (!chat.users) return console.log("chat.users not defined");
+
+      chat.users.forEach((user) => {
+        if (user._id == newMessageRecieved.sender._id) return;
+
+        socket.in(user._id).emit("message recieved", newMessageRecieved);
+      });
     });
 
-    io.on("connection", (socket) => {
-      console.log("Connected to socket.io");
-      socket.on("setup", (userData) => {
-        socket.join(userData._id);
-        socket.emit("connected");
-      });
-
-      socket.on("join chat", (room) => {
-        socket.join(room);
-        console.log("User Joined Room: " + room);
-      });
-      socket.on("typing", (room) => socket.in(room).emit("typing"));
-      socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
-
-      socket.on("new message", (newMessageRecieved) => {
-        var chat = newMessageRecieved.chat;
-
-        if (!chat.users) return console.log("chat.users not defined");
-
-        chat.users.forEach((user) => {
-          if (user._id == newMessageRecieved.sender._id) return;
-
-          socket.in(user._id).emit("message recieved", newMessageRecieved);
-        });
-      });
-
-      socket.off("setup", () => {
-        console.log("USER DISCONNECTED");
-        socket.leave(userData._id);
-      });
+    socket.off("setup", () => {
+      console.log("USER DISCONNECTED");
+      socket.leave(userData._id);
     });
   });
 };
 
-// Call the async function to start the server
-startApolloServer();
-
+startServer();
