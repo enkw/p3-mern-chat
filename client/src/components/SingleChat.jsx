@@ -15,7 +15,7 @@ import animationData from "../animations/typing.json";
 import io from "socket.io-client";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
 import { ChatState } from "../Context/ChatProvider";
-const ENDPOINT = "http://localhost:5000"; // "https://talk-a-tive.herokuapp.com"; -> After deployment
+const ENDPOINT = "http://localhost:3000"; // "https://p3-mern-chat.onrender.com"; -> After deployment
 var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
@@ -112,6 +112,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         socket.on("stop typing", () => setIsTyping(false));
 
         // eslint-disable-next-line
+        return () => {
+            socket.disconnect();
+        }
     }, []);
 
     useEffect(() => {
