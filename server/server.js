@@ -24,10 +24,6 @@ const server = new ApolloServer({
   resolvers,
 });
 
-// --------------------------deployment------------------------------
-
-const __dirname1 = path.resolve();
-
 // if (process.env.NODE_ENV === "production") {
 //   app.use(express.static(path.join(__dirname1, "/client/dist")));
 //   console.log(`We're in production mode baby`)
@@ -40,8 +36,6 @@ const __dirname1 = path.resolve();
 //     res.send("API is running..");
 //   });
 // }
-
-// --------------------------deployment------------------------------
 
 // Error Handling middlewares
 // app.use(notFound);
@@ -60,6 +54,8 @@ const startServer = async () => {
   app.use('/graphql', expressMiddleware(server, {
     context: authMiddleware
   }));
+
+  // const __dirname = path.resolve();
 
   if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '../client/dist')));
