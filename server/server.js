@@ -73,7 +73,7 @@ const startServer = async () => {
   const io = require("socket.io")(expressServer, {
     pingTimeout: 60000,
     cors: {
-      origin: "http://localhost:3000",
+      origin: "https://p3-mern-chat.onrender.com",
       // credentials: true,
     },
   });
