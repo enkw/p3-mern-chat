@@ -58,6 +58,8 @@ const MyChats = ({ fetchAgain }) => {
                 display="flex"
                 justifyContent="space-between"
                 alignItems="center"
+                fontSize={{ base: "28px", md: "30px" }}
+                
             >
                 My Chats
                 <GroupChatModal>

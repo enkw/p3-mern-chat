@@ -115,7 +115,8 @@ function SideDrawer() {
         <Tooltip label="Search Users to chat" hasArrow placement="bottom-end">
           <IconButton icon={<SearchIcon />} onClick={onOpen} variant="ghost" />
         </Tooltip>
-        <Text fontSize="2xl" fontFamily="Work Sans">Discourse</Text>
+        <Text fontSize="3xl" stylesfontFamily="Work Sans">Ventrilo 2 [BETA EDITION]</Text> 
+        {/* for some reason stylefontFamily is being read as bold????*/}
         <Box>
           <Menu>
             <MenuButton as={IconButton} icon={<BellIcon />} variant="ghost" m={1} />
