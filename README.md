@@ -18,7 +18,9 @@ No installation needed!
   
 ## Usage
 
+To try the app out for yourself, just follow the link below and navigate to "Sign Up" to create a user.
 
+Once you've created a user you'll be able to login
   
 To try it out, click [here](https://p3-mern-chat.onrender.com).
 
@@ -27,12 +29,12 @@ Example:
   
 ## Credits
   
-Ian Wolfe.
+Ben Mallar, Bryan Lebeuf, and Ian Wolfe.
   
 ## Features
   
-This project features .
+This project features Apollo, bcrypt, dotenv, express, graphql, jsonwebtoken, mongoose, socket.io, chakra, axios, react, and probably more.
 
 ## Questions
 
-For any questions about this project, please visit my [GitHub](https://github.com/enkw).
+For any questions about this project, please visit Ian's [GitHub](https://github.com/enkw).
