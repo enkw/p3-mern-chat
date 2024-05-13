@@ -1,11 +1,35 @@
 @import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap");
 
+@keyframes gradientShift {
+  0% {
+    background-image: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
+    opacity: 0.8;
+  }
+  25% {
+    background-image: linear-gradient(to bottom right, #2575fc 0%, #6a11cb 100%);
+    opacity: 1;
+  }
+  50% {
+    background-image: linear-gradient(to bottom, #6a11cb 0%, #2575fc 100%);
+    opacity: 0.8;
+  }
+  75% {
+    background-image: linear-gradient(to bottom left, #2575fc 0%, #6a11cb 100%);
+    opacity: 1;
+  }
+  100% {
+    background-image: linear-gradient(to left, #6a11cb 0%, #2575fc 100%);
+    opacity: 0.8;
+  }
+}
+
 .App {
   min-height: 100vh;
   display: flex;
-  background-image: url("./background.png");
+  background-image: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
+  animation: gradientShift 20s ease infinite;
+  background-size: 400% 400%;
   background-position: center;
-  background-size: cover;
 }
 
 ::-webkit-scrollbar {
